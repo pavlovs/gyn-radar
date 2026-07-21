@@ -37,9 +37,12 @@ jobs:
         run: python3 build.py
 
       - name: Encrypt with password gate (StatiCrypt)
+        env:
+          RADAR_PASSWORD: ${{ secrets.RADAR_PASSWORD }}
         run: |
+          test -n "$RADAR_PASSWORD" || { echo "RADAR_PASSWORD secret fehlt"; exit 1; }
           npx --yes staticrypt dist/index.html \
-            -p "${{ secrets.RADAR_PASSWORD }}" \
+            -p "$RADAR_PASSWORD" \
             -d dist_enc --remember 90 \
             --template-title "GYN RADAR Berlin" \
             --template-instructions "Passwort eingeben" \
