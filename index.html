@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GYN RADAR · Berlin</title>
+<style>
+  :root{
+    --paper:#faf7f2; --ink:#1c1a17; --muted:#6f6a62; --line:#e5dfd5;
+    --accent:#8e2a5c; --accent-soft:#f6e8ef; --ok:#2e6b46; --warn:#9a6b00;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font:15px/1.55 "Segoe UI",system-ui,sans-serif;padding:0 20px 80px}
+  .wrap{max-width:1060px;margin:0 auto}
+  header{padding:44px 0 18px;border-bottom:2px solid var(--ink)}
+  h1{font-family:Georgia,serif;font-size:40px;font-weight:400;letter-spacing:-.5px}
+  h1 em{font-style:normal;color:var(--accent)}
+  .sub{color:var(--muted);margin-top:6px}
+  .stats{display:flex;gap:34px;margin:22px 0 8px;flex-wrap:wrap}
+  .stat b{font-family:Georgia,serif;font-size:30px;font-weight:400;display:block}
+  .stat span{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.08em}
+  h2{font-family:Georgia,serif;font-size:22px;font-weight:400;margin:42px 0 4px}
+  .hint{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .chips{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 14px;cursor:pointer;font-size:13px;color:var(--muted)}
+  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .job{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:baseline}
+  .job a{color:var(--ink);text-decoration:none;font-weight:600}
+  .job a:hover{color:var(--accent)}
+  .job .src{color:var(--muted);font-size:12.5px;white-space:nowrap;margin-left:auto}
+  .tag{font-size:11px;letter-spacing:.05em;text-transform:uppercase;border-radius:4px;padding:2px 7px;white-space:nowrap}
+  .tag.assistenzarzt{background:var(--accent-soft);color:var(--accent)}
+  .tag.facharzt,.tag.oberarzt{background:#eee9df;color:#6a6152}
+  .tag.famulatur,.tag.pj,.tag.sonstige{background:#f0efec;color:var(--muted)}
+  .tag.new{background:var(--ok);color:#fff}
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fdfcfa}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+  tr:last-child td{border-bottom:none}
+  td .kl{font-weight:600}
+  td .dept{color:var(--muted);font-size:12.5px}
+  td .knote{color:var(--warn);font-size:12.5px;margin-top:2px}
+  td a{color:var(--accent);text-decoration:none;font-size:13px;white-space:nowrap}
+  td a:hover{text-decoration:underline}
+  select,input[type=text]{font:13px "Segoe UI",sans-serif;border:1px solid var(--line);border-radius:6px;padding:5px 7px;background:#fff;color:var(--ink);width:100%}
+  tr.st-beworben{background:#f4f9f5}
+  tr.st-gespraech,tr.st-hospitation{background:#fbf6ea}
+  tr.st-zusage{background:#e8f4ec}
+  tr.st-absage{opacity:.55}
+  .quick{display:flex;gap:10px;flex-wrap:wrap}
+  .quick a{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;text-decoration:none;color:var(--ink);font-size:13.5px}
+  .quick a:hover{border-color:var(--accent);color:var(--accent)}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12.5px;color:var(--muted)}
+  footer{margin-top:50px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
+  code{background:#f0ede7;padding:1px 5px;border-radius:4px;font-size:12px}
+  .empty{color:var(--muted);font-style:italic;padding:14px 0}
+  .err{color:#a33;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>GYN <em>RADAR</em> Berlin</h1>
+    <div class="sub">Assistenzärztin Gynäkologie &amp; Geburtsmedizin — Stellenscan &amp; Bewerbungs-Tracker, nur Berlin</div>
+    <div class="stats">
+      <div class="stat"><b id="stat-hosp">–</b><span>Kliniken</span></div>
+      <div class="stat"><b id="stat-jobs">–</b><span>Offene Stellen</span></div>
+      <div class="stat"><b id="stat-new">–</b><span>Neu seit letztem Scan</span></div>
+      <div class="stat"><b id="stat-sent">–</b><span>Beworben</span></div>
+      <div class="stat"><b id="stat-date">–</b><span>Letzter Scan</span></div>
+    </div>
+  </header>
+
+  <h2>Gescannte Stellenangebote</h2>
+  <div class="hint">Quellen: Ärzteblatt-Stellenmarkt und praktischArzt — gefiltert auf Stellen mit Berliner Adresse. Der Scan läuft täglich automatisch; neue Stellen bekommen ein grünes Badge.</div>
+  <div class="hint err" id="errbox"></div>
+  <div class="chips" id="chips"></div>
+  <div id="jobs"></div>
+
+  <h2>Berliner Kliniken mit Gynäkologie / Geburtshilfe</h2>
+  <div class="hint">Der eigentliche Hebel: Initiativbewerbung an jede Abteilung — offene Assistenzarzt-Gyn-Stellen sind in Berlin selten öffentlich ausgeschrieben. Status &amp; Notizen werden lokal im Browser gespeichert.</div>
+  <table>
+    <thead><tr><th style="width:34%">Klinik</th><th>Bezirk</th><th>Träger</th><th>Links</th><th style="width:130px">Status</th><th style="width:22%">Notizen</th></tr></thead>
+    <tbody id="hosp"></tbody>
+  </table>
+  <p style="margin-top:10px"><button class="btn" id="export">Tracker-Daten kopieren (Backup)</button></p>
+
+  <h2>Schnellsuchen auf großen Portalen</h2>
+  <div class="quick">
+    <a target="_blank" href="https://www.stepstone.de/jobs/assistenzarzt-gyn%C3%A4kologie/in-berlin">StepStone</a>
+    <a target="_blank" href="https://de.indeed.com/jobs?q=Assistenzarzt+Gyn%C3%A4kologie&l=Berlin">Indeed</a>
+    <a target="_blank" href="https://de.jooble.org/stellenangebote-assistenzarzt-gyn%C3%A4kologie/Berlin">Jooble</a>
+    <a target="_blank" href="https://aerztestellen.aerzteblatt.de/de/stellen/frauenheilkunde-und-geburtshilfe-uebersicht">Ärzteblatt (alle Gyn)</a>
+    <a target="_blank" href="https://www.praktischarzt.de/gynaekologie-geburtshilfe/berlin/">praktischArzt Berlin</a>
+  </div>
+
+  <footer>
+    Scan läuft täglich automatisch (GitHub Actions); lokal: <code>scan.bat</code> doppelklicken.
+    Status &amp; Notizen liegen nur in diesem Browser (localStorage) — Button oben für Backup nutzen.
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script>
+const R = window.RADAR || {scanned_at:"–", jobs:[], hospitals:[], errors:[]};
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const LS_KEY = "gynradar";
+const store = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+const save = () => localStorage.setItem(LS_KEY, JSON.stringify(store));
+const STATI = ["", "Vorbereiten", "Beworben", "Hospitation", "Gespräch", "Zusage", "Absage"];
+
+/* ---- stats ---- */
+const $ = id => document.getElementById(id);
+$("stat-hosp").textContent = R.hospitals.length;
+$("stat-jobs").textContent = R.jobs.length;
+$("stat-new").textContent = R.jobs.filter(j => j.is_new).length;
+$("stat-date").textContent = R.scanned_at;
+const updSent = () => $("stat-sent").textContent =
+  Object.values(store).filter(v => ["Beworben","Hospitation","Gespräch","Zusage"].includes(v.status)).length;
+updSent();
+
+/* ---- jobs + filter ---- */
+const TYPES = ["Alle", "Assistenzarzt", "Facharzt/Oberarzt", "Famulatur/PJ"];
+let active = "Alle";
+function matches(j) {
+  if (active === "Alle") return true;
+  if (active === "Assistenzarzt") return j.type === "Assistenzarzt";
+  if (active === "Facharzt/Oberarzt") return ["Facharzt","Oberarzt"].includes(j.type);
+  return ["Famulatur","PJ","Sonstige"].includes(j.type);
+}
+function renderChips() {
+  $("chips").innerHTML = TYPES.map(t =>
+    `<span class="chip ${t===active?"active":""}" data-t="${t}">${t}</span>`).join("");
+  document.querySelectorAll(".chip").forEach(c =>
+    c.onclick = () => { active = c.dataset.t; renderChips(); renderJobs(); });
+}
+function renderJobs() {
+  const list = R.jobs.filter(matches);
+  $("jobs").innerHTML = list.length ? list.map(j => `
+    <div class="job">
+      <span class="tag ${j.type.toLowerCase()}">${j.type}</span>
+      ${j.is_new ? '<span class="tag new">Neu</span>' : ""}
+      <a href="${esc(j.url)}" target="_blank">${esc(j.title)}</a>
+      <span class="src">${esc(j.source)} · seit ${j.first_seen}</span>
+    </div>`).join("")
+    : '<div class="empty">Keine Treffer in dieser Kategorie — Initiativbewerbung ist der Weg (siehe Kliniken unten).</div>';
+}
+renderChips(); renderJobs();
+if (R.errors && R.errors.length) {
+  const e = $("errbox");
+  e.style.display = "block";
+  e.textContent = "Hinweis: eine Quelle war beim letzten Scan nicht erreichbar (" + R.errors.join("; ") + ")";
+}
+
+/* ---- hospital tracker ---- */
+function rowClass(id) {
+  const s = (store[id] && store[id].status || "").toLowerCase()
+    .replace("ä","ae").replace("ö","oe").replace("ü","ue");
+  return s ? "st-" + s : "";
+}
+function renderHosp() {
+  $("hosp").innerHTML = R.hospitals.map(h => {
+    const st = store[h.id] || {};
+    return `<tr class="${rowClass(h.id)}" id="row-${h.id}">
+      <td><div class="kl">${h.name}</div><div class="dept">${h.dept}</div>${h.note?`<div class="knote">${h.note}</div>`:""}</td>
+      <td>${h.bezirk}</td>
+      <td>${h.traeger}</td>
+      <td><a href="${h.url}" target="_blank">Website</a><br><a href="${h.karriere}" target="_blank">Karriere</a></td>
+      <td><select data-id="${h.id}">${STATI.map(s =>
+        `<option ${s===(st.status||"")?"selected":""}>${s}</option>`).join("")}</select></td>
+      <td><input type="text" data-id="${h.id}" value="${(st.note||"").replace(/"/g,"&quot;")}" placeholder="z. B. 21.07. beworben"></td>
+    </tr>`;
+  }).join("");
+  document.querySelectorAll("select[data-id]").forEach(el => el.onchange = () => {
+    const id = el.dataset.id;
+    store[id] = store[id] || {}; store[id].status = el.value; save(); updSent();
+    document.getElementById("row-" + id).className = rowClass(id);
+  });
+  document.querySelectorAll("input[data-id]").forEach(el => el.onchange = () => {
+    store[el.dataset.id] = store[el.dataset.id] || {};
+    store[el.dataset.id].note = el.value; save();
+  });
+}
+renderHosp();
+
+$("export").onclick = () => {
+  navigator.clipboard.writeText(JSON.stringify(store, null, 1));
+  $("export").textContent = "Kopiert ✓";
+  setTimeout(() => $("export").textContent = "Tracker-Daten kopieren (Backup)", 1500);
+};
+</script>
+</body>
+</html>

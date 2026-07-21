@@ -1,0 +1,60 @@
+name: scan-and-deploy
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # taeglich 05:00 UTC = 07:00 Berlin
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan job boards
+        run: python3 scan.py
+
+      - name: Persist first-seen state
+        run: |
+          git config user.name "gyn-radar-bot"
+          git config user.email "actions@github.com"
+          git add data.js state.json
+          git diff --cached --quiet || git commit -m "scan $(date -u +%F)"
+          git push
+
+      - name: Build single-file page
+        run: python3 build.py
+
+      - name: Encrypt with password gate (StatiCrypt)
+        run: |
+          npx --yes staticrypt dist/index.html \
+            -p "${{ secrets.RADAR_PASSWORD }}" \
+            -d dist_enc --remember 90 \
+            --template-title "GYN RADAR Berlin" \
+            --template-instructions "Passwort eingeben" \
+            --template-button "Öffnen"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist_enc
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
