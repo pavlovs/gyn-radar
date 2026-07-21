@@ -31,6 +31,7 @@ jobs:
           git config user.email "actions@github.com"
           git add data.js state.json
           git diff --cached --quiet || git commit -m "scan $(date -u +%F)"
+          git pull --rebase origin main
           git push
 
       - name: Build single-file page

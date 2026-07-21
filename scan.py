@@ -6,7 +6,9 @@ Stdlib only. Run:  python scan.py
 """
 
 import json
+import os
 import re
+import time
 import urllib.request
 from datetime import date
 from html.parser import HTMLParser
@@ -126,18 +128,23 @@ SCANNERS = [scan_aerzteblatt, scan_praktischarzt]
 
 
 def is_berlin(job):
-    """Nur-Berlin-Filter: Titel nennt Berlin, sonst muss die Detailseite
-    eine Berliner Adresse (PLZ + Berlin) enthalten."""
-    if "berlin" in job["title"].lower():
-        return True
-    try:
-        html, _ = fetch(job["url"], timeout=12)
-        time.sleep(0.4)
-        return bool(BERLIN_RE.search(html))
-    except Exception:
-        # Detailseite nicht lesbar -> im Zweifel behalten, wenn die Quelle
-        # schon regional auf Berlin gefiltert ist
-        return job["source"].endswith("(Berlin)")
+    """Nur-Berlin-Filter: Die Detailseite muss eine Berliner Adresse
+    (PLZ + Berlin) enthalten — ein "Berlin" im Titel reicht nicht.
+    Nicht verifizierbar (Detailseite 2x nicht lesbar) -> verwerfen;
+    der naechste Tagesscan holt es nach."""
+    for attempt in (1, 2):
+        try:
+            html, _ = fetch(job["url"], timeout=12)
+            time.sleep(0.4)
+            return bool(BERLIN_RE.search(html))
+        except (OSError, http.client.HTTPException) as e:
+            if attempt == 2:
+                print(
+                    "[warn] Detailseite nicht lesbar, verworfen: %s (%s)"
+                    % (job["url"], e)
+                )
+                return False
+            time.sleep(1.5)
 
 
 def dedupe(jobs):
@@ -150,14 +157,30 @@ def dedupe(jobs):
     return out
 
 
+def write_atomic(path, text):
+    """Temp schreiben, dann atomar ersetzen — nie das Original zerstoeren."""
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def load_state(state_file):
+    try:
+        state = json.loads(state_file.read_text(encoding="utf-8"))
+        if not isinstance(state.get("first_seen"), dict):
+            raise ValueError("first_seen fehlt/kein dict")
+        return state
+    except FileNotFoundError:
+        return {"first_seen": {}}
+    except Exception as e:
+        print("[warn] state.json unbrauchbar (%s) — starte mit leerem Zustand" % e)
+        return {"first_seen": {}}
+
+
 def main():
     today = date.today().isoformat()
     state_file = BASE / "state.json"
-    state = (
-        json.loads(state_file.read_text(encoding="utf-8"))
-        if state_file.exists()
-        else {"first_seen": {}}
-    )
+    state = load_state(state_file)
 
     jobs, errors = [], []
     for scanner in SCANNERS:
@@ -169,6 +192,10 @@ def main():
             errors.append("%s: %s" % (scanner.__name__, e))
             print("[FAIL] %-28s %s" % (scanner.__name__, e))
     jobs = dedupe(jobs)
+    before = len(jobs)
+    # Nur Assistenzarzt/Weiterbildung — Famulatur/PJ/Facharzt/Oberarzt sind irrelevant
+    jobs = [j for j in jobs if j["type"] == "Assistenzarzt"]
+    print("[filter] nur Assistenzarzt: %d von %d behalten" % (len(jobs), before))
     before = len(jobs)
     jobs = [j for j in jobs if is_berlin(j)]
     print("[filter] nur Berlin: %d von %d behalten" % (len(jobs), before))
@@ -185,13 +212,11 @@ def main():
         "errors": errors,
         "hospitals": hospitals,
     }
-    (BASE / "data.js").write_text(
+    write_atomic(
+        BASE / "data.js",
         "window.RADAR = " + json.dumps(data, ensure_ascii=False, indent=1) + ";\n",
-        encoding="utf-8",
     )
-    state_file.write_text(
-        json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8"
-    )
+    write_atomic(state_file, json.dumps(state, ensure_ascii=False, indent=1))
     print("\n%d Stellen -> data.js geschrieben. index.html oeffnen." % len(jobs))
 
 

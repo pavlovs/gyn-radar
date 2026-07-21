@@ -1,55 +1,6 @@
 window.RADAR = {
  "scanned_at": "2026-07-21",
- "jobs": [
-  {
-   "source": "praktischArzt (Berlin)",
-   "title": "Famulatur in der Gynäkologie",
-   "url": "https://www.praktischarzt.de/job/famulatur-in-der-gynaekologie-2/",
-   "type": "Famulatur",
-   "first_seen": "2026-07-21",
-   "is_new": true
-  },
-  {
-   "source": "praktischArzt (Berlin)",
-   "title": "Famulatur in der Gynäkologie",
-   "url": "https://www.praktischarzt.de/job/famulatur-in-der-gynaekologie-77/",
-   "type": "Famulatur",
-   "first_seen": "2026-07-21",
-   "is_new": true
-  },
-  {
-   "source": "praktischArzt (Berlin)",
-   "title": "Praktisches Jahr in der Gynäkologie",
-   "url": "https://www.praktischarzt.de/job/praktisches-jahr-in-der-gynaekologie-145/",
-   "type": "PJ",
-   "first_seen": "2026-07-21",
-   "is_new": true
-  },
-  {
-   "source": "praktischArzt (Berlin)",
-   "title": "Famulaturstelle im Bereich Gynäkologie- und Geburtshilfe",
-   "url": "https://www.praktischarzt.de/job/famulaturstelle-im-bereich-gynaekologie-und-geburtshilfe/",
-   "type": "Famulatur",
-   "first_seen": "2026-07-21",
-   "is_new": true
-  },
-  {
-   "source": "praktischArzt (Berlin)",
-   "title": "Praktisches Jahr in der Gynäkologie",
-   "url": "https://www.praktischarzt.de/job/praktisches-jahr-in-der-gynaekologie-41/",
-   "type": "PJ",
-   "first_seen": "2026-07-21",
-   "is_new": true
-  },
-  {
-   "source": "praktischArzt (Berlin)",
-   "title": "Famulatur in der Gynäkologie",
-   "url": "https://www.praktischarzt.de/job/famulatur-in-der-gynaekologie-31/",
-   "type": "Famulatur",
-   "first_seen": "2026-07-21",
-   "is_new": true
-  }
- ],
+ "jobs": [],
  "errors": [],
  "hospitals": [
   {
@@ -80,7 +31,7 @@ window.RADAR = {
    "dept": "Klinik für Gynäkologie und Geburtsmedizin",
    "url": "https://www.vivantes.de/klinikum-neukoelln",
    "karriere": "https://karriere.vivantes.de/",
-   "note": "Perinatalzentrum, nah an Wohnort Neukölln"
+   "note": "Perinatalzentrum"
   },
   {
    "id": "vivantes-avk",

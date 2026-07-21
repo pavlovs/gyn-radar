@@ -21,17 +21,16 @@
   .stat span{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.08em}
   h2{font-family:Georgia,serif;font-size:22px;font-weight:400;margin:42px 0 4px}
   .hint{color:var(--muted);font-size:13px;margin-bottom:14px}
-  .chips{display:flex;gap:8px;margin:12px 0 16px;flex-wrap:wrap}
-  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 14px;cursor:pointer;font-size:13px;color:var(--muted)}
-  .chip.active{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .job{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:baseline}
+  .err{color:#a33;display:none}
+  .mt6{margin-top:6px}
+  .mt10{margin-top:10px}
+  th.w-klinik{width:34%} th.w-status{width:130px} th.w-notiz{width:26%}
+  #template{width:100%;font:13px/1.5 "Segoe UI",sans-serif;padding:10px;margin-top:8px}
+  .job{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin-bottom:10px;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
   .job a{color:var(--ink);text-decoration:none;font-weight:600}
   .job a:hover{color:var(--accent)}
   .job .src{color:var(--muted);font-size:12.5px;white-space:nowrap;margin-left:auto}
   .tag{font-size:11px;letter-spacing:.05em;text-transform:uppercase;border-radius:4px;padding:2px 7px;white-space:nowrap}
-  .tag.assistenzarzt{background:var(--accent-soft);color:var(--accent)}
-  .tag.facharzt,.tag.oberarzt{background:#eee9df;color:#6a6152}
-  .tag.famulatur,.tag.pj,.tag.sonstige{background:#f0efec;color:var(--muted)}
   .tag.new{background:var(--ok);color:#fff}
   table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
   th{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);background:#fdfcfa}
@@ -42,7 +41,7 @@
   td .knote{color:var(--warn);font-size:12.5px;margin-top:2px}
   td a{color:var(--accent);text-decoration:none;font-size:13px;white-space:nowrap}
   td a:hover{text-decoration:underline}
-  select,input[type=text]{font:13px "Segoe UI",sans-serif;border:1px solid var(--line);border-radius:6px;padding:5px 7px;background:#fff;color:var(--ink);width:100%}
+  select,input[type=text],input[type=email],textarea{font:13px "Segoe UI",sans-serif;border:1px solid var(--line);border-radius:6px;padding:5px 7px;background:#fff;color:var(--ink);width:100%}
   tr.st-beworben{background:#f4f9f5}
   tr.st-gespraech,tr.st-hospitation{background:#fbf6ea}
   tr.st-zusage{background:#e8f4ec}
@@ -51,39 +50,93 @@
   .quick a{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 14px;text-decoration:none;color:var(--ink);font-size:13.5px}
   .quick a:hover{border-color:var(--accent);color:var(--accent)}
   .btn{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12.5px;color:var(--muted)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-size:13.5px}
   footer{margin-top:50px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--line);padding-top:14px}
   code{background:#f0ede7;padding:1px 5px;border-radius:4px;font-size:12px}
   .empty{color:var(--muted);font-style:italic;padding:14px 0}
-  .err{color:#a33;display:none}
+  /* Anschreiben-Generator */
+  .panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .field label{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:3px}
+  #letter{width:100%;min-height:460px;font:14px/1.5 Georgia,serif;padding:14px;margin-top:12px;white-space:pre-wrap}
+  .panelhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .panelhead b{font-family:Georgia,serif;font-size:17px;font-weight:400}
+  details{margin-bottom:14px}
+  summary{cursor:pointer;color:var(--accent);font-size:13.5px}
+  details .grid2{margin-top:10px}
+  /* Mobile */
+  @media (max-width:720px){
+    body{padding:0 12px 60px}
+    header{padding:24px 0 14px}
+    h1{font-size:30px}
+    .stats{gap:18px}
+    .stat b{font-size:24px}
+    .job .src{margin-left:0;white-space:normal}
+    table,tbody,tr,td{display:block;width:100%}
+    thead{display:none}
+    table{background:none;border:none}
+    tr{background:#fff;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+    tr.st-beworben,tr.st-gespraech,tr.st-hospitation,tr.st-zusage{border-left:4px solid var(--ok)}
+    td{border-bottom:none;padding:6px 14px}
+    td:first-child{padding-top:12px}
+    td:last-child{padding-bottom:12px}
+    .grid2{grid-template-columns:1fr}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>GYN <em>RADAR</em> Berlin</h1>
-    <div class="sub">Assistenzärztin Gynäkologie &amp; Geburtsmedizin — Stellenscan &amp; Bewerbungs-Tracker, nur Berlin</div>
+    <div class="sub">Assistenzärztin Gynäkologie &amp; Geburtsmedizin — Stellenscan, Bewerbungs-Tracker &amp; Anschreiben, nur Berlin</div>
     <div class="stats">
       <div class="stat"><b id="stat-hosp">–</b><span>Kliniken</span></div>
       <div class="stat"><b id="stat-jobs">–</b><span>Offene Stellen</span></div>
-      <div class="stat"><b id="stat-new">–</b><span>Neu seit letztem Scan</span></div>
+      <div class="stat"><b id="stat-new">–</b><span>Neu</span></div>
       <div class="stat"><b id="stat-sent">–</b><span>Beworben</span></div>
       <div class="stat"><b id="stat-date">–</b><span>Letzter Scan</span></div>
     </div>
   </header>
 
-  <h2>Gescannte Stellenangebote</h2>
-  <div class="hint">Quellen: Ärzteblatt-Stellenmarkt und praktischArzt — gefiltert auf Stellen mit Berliner Adresse. Der Scan läuft täglich automatisch; neue Stellen bekommen ein grünes Badge.</div>
+  <h2>Ausgeschriebene Assistenzarzt-Stellen</h2>
+  <div class="hint">Quellen: Ärzteblatt-Stellenmarkt und praktischArzt — nur Assistenzarzt/Weiterbildung, nur Berliner Adressen. Scan läuft täglich automatisch; Neues bekommt ein grünes Badge.</div>
   <div class="hint err" id="errbox"></div>
-  <div class="chips" id="chips"></div>
   <div id="jobs"></div>
 
   <h2>Berliner Kliniken mit Gynäkologie / Geburtshilfe</h2>
-  <div class="hint">Der eigentliche Hebel: Initiativbewerbung an jede Abteilung — offene Assistenzarzt-Gyn-Stellen sind in Berlin selten öffentlich ausgeschrieben. Status &amp; Notizen werden lokal im Browser gespeichert.</div>
+  <div class="hint">Der eigentliche Hebel: Initiativbewerbung an jede Abteilung — offene Stellen sind selten öffentlich. Status &amp; Notizen werden nur in diesem Browser gespeichert.</div>
   <table>
-    <thead><tr><th style="width:34%">Klinik</th><th>Bezirk</th><th>Träger</th><th>Links</th><th style="width:130px">Status</th><th style="width:22%">Notizen</th></tr></thead>
+    <thead><tr><th class="w-klinik">Klinik</th><th>Bezirk</th><th>Links</th><th class="w-status">Status</th><th class="w-notiz">Notizen</th></tr></thead>
     <tbody id="hosp"></tbody>
   </table>
-  <p style="margin-top:10px"><button class="btn" id="export">Tracker-Daten kopieren (Backup)</button></p>
+  <p class="mt10"><button class="btn" id="export">Tracker-Daten kopieren (Backup)</button></p>
+
+  <h2 id="anschreiben">Anschreiben-Generator</h2>
+  <div class="hint">In der Klinik-Liste „Anschreiben" klicken — Anrede und Klinik-Absatz individualisieren, Text kopieren, in E-Mail oder Word einfügen. Kontaktdaten bleiben in diesem Browser.</div>
+  <div class="panel">
+    <details id="profilebox">
+      <summary>Meine Kontaktdaten (einmalig ausfüllen)</summary>
+      <div class="grid2">
+        <div class="field"><label>Name</label><input type="text" id="p-name" placeholder="Dr. med. Vorname Nachname"></div>
+        <div class="field"><label>Straße + Nr.</label><input type="text" id="p-strasse" placeholder="Musterstraße 1"></div>
+        <div class="field"><label>PLZ Ort</label><input type="text" id="p-ort" placeholder="12043 Berlin"></div>
+        <div class="field"><label>E-Mail</label><input type="email" id="p-email" placeholder="name@mail.de"></div>
+        <div class="field"><label>Telefon</label><input type="text" id="p-tel" placeholder="+49 ..."></div>
+      </div>
+    </details>
+    <div class="panelhead"><b id="l-klinik">Keine Klinik gewählt</b><span class="hint" id="l-dept"></span></div>
+    <div class="grid2">
+      <div class="field"><label>Anrede</label><input type="text" id="l-anrede" placeholder="Sehr geehrte Damen und Herren"></div>
+      <div class="field"><label>Individueller Klinik-Absatz</label><input type="text" id="l-absatz" placeholder="Warum diese Klinik?"></div>
+    </div>
+    <details>
+      <summary>Brieftext-Vorlage anpassen (einmalig — z. B. Klinik- und Uni-Namen im Lebenslauf ergänzen)</summary>
+      <textarea id="template" spellcheck="false" rows="14"></textarea>
+      <p class="mt6"><button class="btn" id="resettpl">Vorlage zurücksetzen</button></p>
+    </details>
+    <textarea id="letter" spellcheck="false"></textarea>
+    <p class="mt10"><button class="btn primary" id="copyletter">Anschreiben kopieren</button></p>
+  </div>
 
   <h2>Schnellsuchen auf großen Portalen</h2>
   <div class="quick">
@@ -96,7 +149,7 @@
 
   <footer>
     Scan läuft täglich automatisch (GitHub Actions); lokal: <code>scan.bat</code> doppelklicken.
-    Status &amp; Notizen liegen nur in diesem Browser (localStorage) — Button oben für Backup nutzen.
+    Status, Notizen &amp; Kontaktdaten liegen nur in diesem Browser (localStorage) — Backup-Button nutzen.
   </footer>
 </div>
 
@@ -105,56 +158,46 @@
 const R = window.RADAR || {scanned_at:"–", jobs:[], hospitals:[], errors:[]};
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const LS_KEY = "gynradar";
-const store = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+let store = {}, storeCorrupt = false;
+try {
+  const raw = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) store = raw;
+  else if (localStorage.getItem(LS_KEY)) storeCorrupt = true;
+} catch (e) { storeCorrupt = true; }
 const save = () => localStorage.setItem(LS_KEY, JSON.stringify(store));
 const STATI = ["", "Vorbereiten", "Beworben", "Hospitation", "Gespräch", "Zusage", "Absage"];
+const $ = id => document.getElementById(id);
 
 /* ---- stats ---- */
-const $ = id => document.getElementById(id);
 $("stat-hosp").textContent = R.hospitals.length;
 $("stat-jobs").textContent = R.jobs.length;
 $("stat-new").textContent = R.jobs.filter(j => j.is_new).length;
 $("stat-date").textContent = R.scanned_at;
 const updSent = () => $("stat-sent").textContent =
-  Object.values(store).filter(v => ["Beworben","Hospitation","Gespräch","Zusage"].includes(v.status)).length;
+  Object.entries(store).filter(([k,v]) => k !== "_profile" && v && typeof v === "object" &&
+    ["Beworben","Hospitation","Gespräch","Zusage"].includes(v.status)).length;
 updSent();
 
-/* ---- jobs + filter ---- */
-const TYPES = ["Alle", "Assistenzarzt", "Facharzt/Oberarzt", "Famulatur/PJ"];
-let active = "Alle";
-function matches(j) {
-  if (active === "Alle") return true;
-  if (active === "Assistenzarzt") return j.type === "Assistenzarzt";
-  if (active === "Facharzt/Oberarzt") return ["Facharzt","Oberarzt"].includes(j.type);
-  return ["Famulatur","PJ","Sonstige"].includes(j.type);
-}
-function renderChips() {
-  $("chips").innerHTML = TYPES.map(t =>
-    `<span class="chip ${t===active?"active":""}" data-t="${t}">${t}</span>`).join("");
-  document.querySelectorAll(".chip").forEach(c =>
-    c.onclick = () => { active = c.dataset.t; renderChips(); renderJobs(); });
-}
-function renderJobs() {
-  const list = R.jobs.filter(matches);
-  $("jobs").innerHTML = list.length ? list.map(j => `
-    <div class="job">
-      <span class="tag ${j.type.toLowerCase()}">${j.type}</span>
-      ${j.is_new ? '<span class="tag new">Neu</span>' : ""}
-      <a href="${esc(j.url)}" target="_blank">${esc(j.title)}</a>
-      <span class="src">${esc(j.source)} · seit ${j.first_seen}</span>
-    </div>`).join("")
-    : '<div class="empty">Keine Treffer in dieser Kategorie — Initiativbewerbung ist der Weg (siehe Kliniken unten).</div>';
-}
-renderChips(); renderJobs();
-if (R.errors && R.errors.length) {
-  const e = $("errbox");
+/* ---- jobs ---- */
+$("jobs").innerHTML = R.jobs.length ? R.jobs.map(j => `
+  <div class="job">
+    ${j.is_new ? '<span class="tag new">Neu</span>' : ""}
+    <a href="${esc(j.url)}" target="_blank">${esc(j.title)}</a>
+    <span class="src">${esc(j.source)} · seit ${j.first_seen}</span>
+  </div>`).join("")
+  : '<div class="empty">Aktuell keine öffentlich ausgeschriebene Assistenzarzt-Gyn-Stelle in Berlin — Initiativbewerbung ist der Weg (Kliniken unten, Anschreiben-Generator dazu).</div>';
+if ((R.errors && R.errors.length) || storeCorrupt) {
+  const e = $("errbox"), msgs = [];
+  if (R.errors && R.errors.length) msgs.push("eine Quelle war beim letzten Scan nicht erreichbar (" + R.errors.join("; ") + ")");
+  if (storeCorrupt) msgs.push("gespeicherte Tracker-Daten waren unlesbar und wurden zurückgesetzt");
   e.style.display = "block";
-  e.textContent = "Hinweis: eine Quelle war beim letzten Scan nicht erreichbar (" + R.errors.join("; ") + ")";
+  e.textContent = "Hinweis: " + msgs.join(" · ");
 }
 
 /* ---- hospital tracker ---- */
+function entry(id) { return store[id] = store[id] || {}; }
 function rowClass(id) {
-  const s = (store[id] && store[id].status || "").toLowerCase()
+  const s = ((store[id] || {}).status || "").toLowerCase()
     .replace("ä","ae").replace("ö","oe").replace("ü","ue");
   return s ? "st-" + s : "";
 }
@@ -164,22 +207,20 @@ function renderHosp() {
     return `<tr class="${rowClass(h.id)}" id="row-${h.id}">
       <td><div class="kl">${h.name}</div><div class="dept">${h.dept}</div>${h.note?`<div class="knote">${h.note}</div>`:""}</td>
       <td>${h.bezirk}</td>
-      <td>${h.traeger}</td>
-      <td><a href="${h.url}" target="_blank">Website</a><br><a href="${h.karriere}" target="_blank">Karriere</a></td>
+      <td><a href="${h.url}" target="_blank">Website</a> · <a href="${h.karriere}" target="_blank">Karriere</a> · <a href="#anschreiben" data-letter="${h.id}">Anschreiben</a></td>
       <td><select data-id="${h.id}">${STATI.map(s =>
         `<option ${s===(st.status||"")?"selected":""}>${s}</option>`).join("")}</select></td>
       <td><input type="text" data-id="${h.id}" value="${(st.note||"").replace(/"/g,"&quot;")}" placeholder="z. B. 21.07. beworben"></td>
     </tr>`;
   }).join("");
   document.querySelectorAll("select[data-id]").forEach(el => el.onchange = () => {
-    const id = el.dataset.id;
-    store[id] = store[id] || {}; store[id].status = el.value; save(); updSent();
-    document.getElementById("row-" + id).className = rowClass(id);
+    entry(el.dataset.id).status = el.value; save(); updSent();
+    document.getElementById("row-" + el.dataset.id).className = rowClass(el.dataset.id);
   });
   document.querySelectorAll("input[data-id]").forEach(el => el.onchange = () => {
-    store[el.dataset.id] = store[el.dataset.id] || {};
-    store[el.dataset.id].note = el.value; save();
+    entry(el.dataset.id).note = el.value; save();
   });
+  document.querySelectorAll("a[data-letter]").forEach(el => el.onclick = () => openLetter(el.dataset.letter));
 }
 renderHosp();
 
@@ -187,6 +228,102 @@ $("export").onclick = () => {
   navigator.clipboard.writeText(JSON.stringify(store, null, 1));
   $("export").textContent = "Kopiert ✓";
   setTimeout(() => $("export").textContent = "Tracker-Daten kopieren (Backup)", 1500);
+};
+
+/* ---- Anschreiben-Generator ---- */
+const DEFAULT_ABSATZ = "Ihre Abteilung spricht mich durch ihr breites klinisches Spektrum und die strukturierte Weiterbildung besonders an.";
+/* Bewusst ohne Klinik-/Uni-Namen — die eigene Vita wird einmalig in der
+   Vorlage ergänzt und bleibt im localStorage, nicht im öffentlichen Repo. */
+const DEFAULT_TEMPLATE = [
+  "{ANREDE},",
+  "",
+  "nach zwei Weiterbildungsjahren in der Viszeralchirurgie — aktuell im dritten Ausbildungsjahr — möchte ich meine operative und klinische Erfahrung gezielt in die Weiterbildung zur Fachärztin für Gynäkologie und Geburtsmedizin einbringen. Daher bewerbe ich mich mit großem Interesse als Assistenzärztin in Ihrer Klinik.",
+  "",
+  "In meiner bisherigen Weiterbildung habe ich fundierte Erfahrung im Patientenmanagement sowie in der täglichen Stations- und Dienstarbeit gesammelt, operative Fähigkeiten entwickelt und die perioperative Patientenbetreuung vertieft. Während meines Einsatzes in der Rettungsstelle habe ich die Versorgung akuter Notfälle, Triage und strukturiertes Arbeiten unter Zeitdruck erlernt. Diese Erfahrungen haben mir klinische Sicherheit, Belastbarkeit und ein gutes Verständnis für interdisziplinäre Abläufe vermittelt.",
+  "",
+  "Bereits während meines Studiums hat mich die Gynäkologie und Geburtsmedizin durch ihre Vielfältigkeit fasziniert. Mein Wahl-Tertial im Praktischen Jahr absolvierte ich daher in der Gynäkologie und Geburtshilfe an einer Universitätsklinik. Die Erfahrungen dieser Zeit haben meine Entschlossenheit gestärkt, meine berufliche Laufbahn in diesem Fachgebiet fortzusetzen.",
+  "",
+  "{KLINIK_ABSATZ}",
+  "",
+  "Ich bringe eine sorgfältige und zuverlässige Arbeitsweise, Teamorientierung, Empathie im Umgang mit Patientinnen, Patienten und Angehörigen sowie hohe Motivation mit. Ich würde mich sehr freuen, mich bei Ihnen persönlich vorzustellen — sehr gerne verbunden mit einer Hospitation.",
+].join("\n");
+const PROFILE_FIELDS = ["name","strasse","ort","email","tel"];
+let selId = null;
+
+function profile() { return store._profile = store._profile || {}; }
+PROFILE_FIELDS.forEach(f => {
+  const el = $("p-" + f);
+  el.value = profile()[f] || "";
+  el.oninput = () => { profile()[f] = el.value; save(); genLetter(); };
+});
+if (!PROFILE_FIELDS.every(f => profile()[f])) $("profilebox").open = true;
+
+function todayDE() {
+  return new Date().toLocaleDateString("de-DE", {day:"numeric", month:"long", year:"numeric"});
+}
+
+function currentTemplate() {
+  return (typeof store._template === "string" && store._template.trim()) ? store._template : DEFAULT_TEMPLATE;
+}
+
+function letterText(h) {
+  const p = profile();
+  const anrede = $("l-anrede").value.trim() || "Sehr geehrte Damen und Herren";
+  const absatz = $("l-absatz").value.trim() || DEFAULT_ABSATZ;
+  const body = currentTemplate()
+    .replaceAll("{ANREDE}", anrede)
+    .replaceAll("{KLINIK_ABSATZ}", absatz);
+  return [
+    p.name || "[Name]",
+    p.strasse || "[Straße]",
+    p.ort || "[PLZ Ort]",
+    p.email || "[E-Mail]",
+    p.tel || "[Telefon]",
+    "",
+    h.name,
+    h.dept,
+    "",
+    "Berlin, " + todayDE(),
+    "",
+    "Bewerbung als Assistenzärztin für Gynäkologie und Geburtsmedizin",
+    "",
+    body,
+    "",
+    "Mit freundlichen Grüßen",
+    p.name || "[Name]",
+  ].join("\n");
+}
+
+function genLetter() {
+  if (!selId) return;
+  const h = R.hospitals.find(x => x.id === selId);
+  if (h) $("letter").value = letterText(h);
+}
+
+function openLetter(id) {
+  selId = id;
+  const h = R.hospitals.find(x => x.id === id);
+  if (!h) return;
+  $("l-klinik").textContent = h.name;
+  $("l-dept").textContent = h.dept;
+  $("l-anrede").value = (store[id] || {}).chef || "";
+  $("l-absatz").value = (store[id] || {}).absatz || "";
+  genLetter();
+}
+
+$("template").value = currentTemplate();
+$("template").oninput = () => { store._template = $("template").value; save(); genLetter(); };
+$("resettpl").onclick = () => {
+  delete store._template; save();
+  $("template").value = DEFAULT_TEMPLATE; genLetter();
+};
+
+$("l-anrede").oninput = () => { if (selId) { entry(selId).chef = $("l-anrede").value; save(); genLetter(); } };
+$("l-absatz").oninput = () => { if (selId) { entry(selId).absatz = $("l-absatz").value; save(); genLetter(); } };
+$("copyletter").onclick = () => {
+  navigator.clipboard.writeText($("letter").value);
+  $("copyletter").textContent = "Kopiert ✓";
+  setTimeout(() => $("copyletter").textContent = "Anschreiben kopieren", 1500);
 };
 </script>
 </body>
