@@ -6,8 +6,11 @@ Stellenscan + Bewerbungs-Tracker für die Facharzt-Weiterbildung Gynäkologie & 
 
 Die Seite wird per GitHub Actions täglich neu gescannt und passwortgeschützt (StatiCrypt/AES) auf GitHub Pages veröffentlicht. Einfach die Pages-URL öffnen, Passwort eingeben (bleibt 90 Tage gespeichert), fertig — funktioniert auch am Handy.
 
-- **Stellen**: gescannt von Ärzteblatt-Stellenmarkt + praktischArzt, gefiltert auf Berliner Adressen; „Neu"-Badge für frisch entdeckte Stellen.
-- **Kliniken**: alle 18 Berliner Häuser mit Gyn/Geburtshilfe, mit Website-/Karriere-Links.
+- **Stellen**: gescannt von Ärzteblatt-Stellenmarkt, praktischArzt und direkt von den Karriereportalen Vivantes (52 Seiten), Charité und DRK (Sitemap); nur Assistenzarzt, nur Berlin; „Neu"-Badge für frisch entdeckte Stellen.
+- **Push-Alarm**: findet der Tagesscan neue Stellen, geht eine ntfy.sh-Nachricht raus (Topic = Actions-Secret `NTFY_TOPIC`; in der ntfy-App oder unter ntfy.sh/&lt;topic&gt; abonnieren).
+- **Karte**: alle Kliniken auf einer OpenStreetMap (Leaflet), Markerfarbe = Bewerbungsstatus.
+- **Kliniken**: alle 18 Berliner Häuser mit Gyn/Geburtshilfe, mit Website-/Karriere-/kununu-Links.
+- **Nachfassen**: „Beworben" stempelt das Datum; nach 14 Tagen ohne Statuswechsel erscheint ein Nachfassen-Hinweis.
 - **Tracker**: Status (Vorbereiten/Beworben/Hospitation/Gespräch/Zusage/Absage) + Notizen pro Klinik. Liegt nur im Browser (localStorage) — nichts davon landet im Repo. Backup-Button im Dashboard.
 
 ## Nutzung (lokal)

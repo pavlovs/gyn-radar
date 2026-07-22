@@ -122,9 +122,123 @@ def scan_praktischarzt():
     return jobs
 
 
-# DRK-Jobportal ist eine JS-SPA (keine statischen Links) — nicht scannbar
-# ohne Browser; DRK-Stellen tauchen auf praktischArzt/Ärzteblatt auf.
-SCANNERS = [scan_aerzteblatt, scan_praktischarzt]
+GYN_RE = re.compile(r"gyn|geburt|frauenheil", re.I)
+# Nicht-ärztliche Rollen, die in Gyn-Slugs auftauchen (Pflege etc.)
+EXCLUDE_RE = re.compile(
+    r"pfleg|hebamme|entbindung|mfa|fachangestellt|sekret|leitung|psycholog|sozial",
+    re.I,
+)
+TITLE_RE = re.compile(r"<title>([^<]+)</title>", re.I)
+
+
+def detail_title(url, fallback):
+    """Echten Stellentitel von der Detailseite holen (nur fuer wenige Treffer)."""
+    try:
+        html, _ = fetch(url, timeout=12)
+        time.sleep(0.3)
+        m = TITLE_RE.search(html)
+        if m:
+            from html import unescape
+
+            t = re.sub(r"\s+", " ", unescape(m.group(1))).strip()
+            return (
+                re.sub(r"\s*[|–-]\s*(Vivantes|Charité|DRK|Karriere).*$", "", t)
+                or fallback
+            )
+    except (OSError, http.client.HTTPException):
+        pass
+    return fallback
+
+
+def slug_title(href):
+    slug = href.rstrip("/").rsplit("/", 1)[-1]
+    slug = re.sub(r"-+[0-9]+$", "", slug)
+    return slug.replace("--", " ").replace("-", " ").strip()
+
+
+def scan_drk():
+    """DRK Kliniken Berlin: Stellen aus der sitemap.xml (Portal selbst ist JS)."""
+    xml, _ = fetch("https://jobs.drk-kliniken-berlin.de/sitemap.xml")
+    jobs = []
+    for loc in re.findall(r"<loc>([^<]+)</loc>", xml):
+        slug = loc.rsplit("/", 1)[-1]
+        if (
+            "/stellenangebote/" in loc
+            and GYN_RE.search(slug)
+            and not EXCLUDE_RE.search(slug)
+        ):
+            jobs.append(
+                {
+                    "source": "DRK Kliniken Berlin",
+                    "title": slug_title(loc),
+                    "url": loc,
+                    "type": classify(slug),
+                    "berlin_ok": True,
+                }
+            )
+    return jobs
+
+
+def scan_vivantes():
+    """Vivantes-Karriereportal: /jobs/ Seiten crawlen, Gyn-Slugs filtern.
+    Alle Vivantes-Standorte liegen in Berlin."""
+    base = "https://karriere.vivantes.de"
+    first, _ = fetch(base + "/jobs/")
+    pages = [int(n) for n in re.findall(r"/jobs/page/(\d+)/", first)]
+    last = min(max(pages) if pages else 1, 80)
+    seen, jobs = set(), []
+    for page in range(1, last + 1):
+        html = first if page == 1 else None
+        if html is None:
+            try:
+                html, _ = fetch("%s/jobs/page/%d/" % (base, page))
+                time.sleep(0.2)
+            except (OSError, http.client.HTTPException):
+                continue
+        for href in re.findall(r'href="(/stellenangebote/detail/[^"]+)"', html):
+            slug = href.rstrip("/").rsplit("/", 1)[-1]
+            if href in seen or not GYN_RE.search(slug) or EXCLUDE_RE.search(slug):
+                continue
+            seen.add(href)
+            url = base + href
+            jobs.append(
+                {
+                    "source": "Vivantes",
+                    "title": detail_title(url, slug_title(href)),
+                    "url": url,
+                    "type": classify(slug),
+                    "berlin_ok": True,
+                }
+            )
+    return jobs
+
+
+def scan_charite():
+    """Charité-Karriereportal: serverseitig gerenderte Stellenliste."""
+    base = "https://karriere.charite.de"
+    html, _ = fetch(base + "/stellenangebote")
+    jobs = []
+    for href, text in anchors(html):
+        if "/stellenangebote/detail/" not in href:
+            continue
+        probe = text + " " + href
+        if GYN_RE.search(probe) and not EXCLUDE_RE.search(probe):
+            url = absolutize(href, base)
+            jobs.append(
+                {
+                    "source": "Charité",
+                    "title": text
+                    if len(text) > 15
+                    else detail_title(url, text or href),
+                    "url": url,
+                    "type": classify(probe),
+                    "berlin_ok": True,
+                }
+            )
+    return jobs
+
+
+SCANNERS = [scan_aerzteblatt, scan_praktischarzt, scan_drk, scan_vivantes, scan_charite]
 
 
 def is_berlin(job):
@@ -182,14 +296,18 @@ def main():
     state_file = BASE / "state.json"
     state = load_state(state_file)
 
+    health = state.setdefault("source_health", {})
     jobs, errors = [], []
     for scanner in SCANNERS:
+        name = scanner.__name__.replace("scan_", "")
         try:
             found = scanner()
             jobs.extend(found)
+            health[name] = {"last_ok": today, "count": len(found)}
             print("[ok]   %-28s %d Treffer" % (scanner.__name__, len(found)))
         except Exception as e:
             errors.append("%s: %s" % (scanner.__name__, e))
+            health.setdefault(name, {})["error"] = today
             print("[FAIL] %-28s %s" % (scanner.__name__, e))
     jobs = dedupe(jobs)
     before = len(jobs)
@@ -197,7 +315,7 @@ def main():
     jobs = [j for j in jobs if j["type"] == "Assistenzarzt"]
     print("[filter] nur Assistenzarzt: %d von %d behalten" % (len(jobs), before))
     before = len(jobs)
-    jobs = [j for j in jobs if is_berlin(j)]
+    jobs = [j for j in jobs if j.pop("berlin_ok", False) or is_berlin(j)]
     print("[filter] nur Berlin: %d von %d behalten" % (len(jobs), before))
 
     for j in jobs:
@@ -211,6 +329,7 @@ def main():
         "jobs": jobs,
         "errors": errors,
         "hospitals": hospitals,
+        "source_health": health,
     }
     write_atomic(
         BASE / "data.js",

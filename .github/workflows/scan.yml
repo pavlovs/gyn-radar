@@ -25,6 +25,11 @@ jobs:
       - name: Scan job boards
         run: python3 scan.py
 
+      - name: Push notification on new postings
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python3 notify.py
+
       - name: Persist first-seen state
         run: |
           git config user.name "gyn-radar-bot"

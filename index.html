@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GYN RADAR · Berlin</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root{
     --paper:#faf7f2; --ink:#1c1a17; --muted:#6f6a62; --line:#e5dfd5;
@@ -23,6 +25,11 @@
   .hint{color:var(--muted);font-size:13px;margin-bottom:14px}
   .err{color:#a33;display:none}
   .mt6{margin-top:6px}
+  #map{height:400px;border:1px solid var(--line);border-radius:10px;background:#eee}
+  .leaflet-popup-content{font:13px "Segoe UI",sans-serif}
+  .leaflet-popup-content b{display:block;margin-bottom:2px}
+  .chip-nachfassen{background:#c14a09;color:#fff;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;border-radius:4px;padding:2px 6px;display:inline-block;margin-top:4px}
+  .applied-date{color:var(--muted);font-size:11.5px;margin-top:3px}
   .mt10{margin-top:10px}
   th.w-klinik{width:34%} th.w-status{width:130px} th.w-notiz{width:26%}
   #template{width:100%;font:13px/1.5 "Segoe UI",sans-serif;padding:10px;margin-top:8px}
@@ -99,9 +106,14 @@
   </header>
 
   <h2>Ausgeschriebene Assistenzarzt-Stellen</h2>
-  <div class="hint">Quellen: Ärzteblatt-Stellenmarkt und praktischArzt — nur Assistenzarzt/Weiterbildung, nur Berliner Adressen. Scan läuft täglich automatisch; Neues bekommt ein grünes Badge.</div>
+  <div class="hint">Quellen: Ärzteblatt-Stellenmarkt, praktischArzt + direkt die Karriereportale von Vivantes, Charité und DRK — nur Assistenzarzt/Weiterbildung, nur Berlin. Scan läuft täglich automatisch; Neues bekommt ein grünes Badge und einen Push (ntfy).</div>
   <div class="hint err" id="errbox"></div>
+  <div class="hint" id="healthbox"></div>
   <div id="jobs"></div>
+
+  <h2>Karte</h2>
+  <div class="hint">Alle 18 Kliniken — grün = beworben, orange = nachfassen, dunkelrot = offen.</div>
+  <div id="map"></div>
 
   <h2>Berliner Kliniken mit Gynäkologie / Geburtshilfe</h2>
   <div class="hint">Der eigentliche Hebel: Initiativbewerbung an jede Abteilung — offene Stellen sind selten öffentlich. Status &amp; Notizen werden nur in diesem Browser gespeichert.</div>
@@ -109,7 +121,7 @@
     <thead><tr><th class="w-klinik">Klinik</th><th>Bezirk</th><th>Links</th><th class="w-status">Status</th><th class="w-notiz">Notizen</th></tr></thead>
     <tbody id="hosp"></tbody>
   </table>
-  <p class="mt10"><button class="btn" id="export">Tracker-Daten kopieren (Backup)</button></p>
+  <p class="mt10"><button class="btn" id="export">Tracker-Daten kopieren (Backup)</button> <button class="btn" id="import">Backup einspielen</button></p>
 
   <h2 id="anschreiben">Anschreiben-Generator</h2>
   <div class="hint">In der Klinik-Liste „Anschreiben" klicken — Anrede und Klinik-Absatz individualisieren, Text kopieren, in E-Mail oder Word einfügen. Kontaktdaten bleiben in diesem Browser.</div>
@@ -144,6 +156,7 @@
     <a target="_blank" href="https://de.indeed.com/jobs?q=Assistenzarzt+Gyn%C3%A4kologie&l=Berlin">Indeed</a>
     <a target="_blank" href="https://de.jooble.org/stellenangebote-assistenzarzt-gyn%C3%A4kologie/Berlin">Jooble</a>
     <a target="_blank" href="https://aerztestellen.aerzteblatt.de/de/stellen/frauenheilkunde-und-geburtshilfe-uebersicht">Ärzteblatt (alle Gyn)</a>
+    <a target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=Assistenzarzt%20Gyn%C3%A4kologie&location=Berlin">LinkedIn</a>
     <a target="_blank" href="https://www.praktischarzt.de/gynaekologie-geburtshilfe/berlin/">praktischArzt Berlin</a>
   </div>
 
@@ -196,6 +209,18 @@ if ((R.errors && R.errors.length) || storeCorrupt) {
 
 /* ---- hospital tracker ---- */
 function entry(id) { return store[id] = store[id] || {}; }
+const NACHFASS_TAGE = 14;
+function daysSince(iso) {
+  const d = new Date(iso + "T00:00:00");
+  return isNaN(d) ? 0 : Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+function needsFollowup(st) {
+  return st.status === "Beworben" && st.applied && daysSince(st.applied) >= NACHFASS_TAGE;
+}
+function fmtDE(iso) {
+  const [y,m,d] = (iso || "").split("-");
+  return d && m ? d + "." + m + "." : "";
+}
 function rowClass(id) {
   const s = ((store[id] || {}).status || "").toLowerCase()
     .replace("ä","ae").replace("ö","oe").replace("ü","ue");
@@ -207,15 +232,19 @@ function renderHosp() {
     return `<tr class="${rowClass(h.id)}" id="row-${h.id}">
       <td><div class="kl">${h.name}</div><div class="dept">${h.dept}</div>${h.note?`<div class="knote">${h.note}</div>`:""}</td>
       <td>${h.bezirk}</td>
-      <td><a href="${h.url}" target="_blank">Website</a> · <a href="${h.karriere}" target="_blank">Karriere</a> · <a href="#anschreiben" data-letter="${h.id}">Anschreiben</a></td>
+      <td><a href="${h.url}" target="_blank">Website</a> · <a href="${h.karriere}" target="_blank">Karriere</a> · <a href="${h.kununu}" target="_blank">kununu</a> · <a href="#anschreiben" data-letter="${h.id}">Anschreiben</a></td>
       <td><select data-id="${h.id}">${STATI.map(s =>
-        `<option ${s===(st.status||"")?"selected":""}>${s}</option>`).join("")}</select></td>
+        `<option ${s===(st.status||"")?"selected":""}>${s}</option>`).join("")}</select>
+        ${st.status==="Beworben" && st.applied ? `<div class="applied-date">seit ${fmtDE(st.applied)}</div>` : ""}
+        ${needsFollowup(st) ? '<span class="chip-nachfassen">Nachfassen</span>' : ""}</td>
       <td><input type="text" data-id="${h.id}" value="${(st.note||"").replace(/"/g,"&quot;")}" placeholder="z. B. 21.07. beworben"></td>
     </tr>`;
   }).join("");
   document.querySelectorAll("select[data-id]").forEach(el => el.onchange = () => {
-    entry(el.dataset.id).status = el.value; save(); updSent();
-    document.getElementById("row-" + el.dataset.id).className = rowClass(el.dataset.id);
+    const e = entry(el.dataset.id);
+    e.status = el.value;
+    if (el.value === "Beworben" && !e.applied) e.applied = new Date().toISOString().slice(0, 10);
+    save(); updSent(); renderHosp(); renderMap();
   });
   document.querySelectorAll("input[data-id]").forEach(el => el.onchange = () => {
     entry(el.dataset.id).note = el.value; save();
@@ -229,6 +258,57 @@ $("export").onclick = () => {
   $("export").textContent = "Kopiert ✓";
   setTimeout(() => $("export").textContent = "Tracker-Daten kopieren (Backup)", 1500);
 };
+$("import").onclick = () => {
+  const raw = prompt("Backup-JSON hier einfügen (ersetzt die aktuellen Tracker-Daten):");
+  if (!raw) return;
+  try {
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj !== "object" || Array.isArray(obj)) throw new Error("kein Objekt");
+    store = obj; save(); location.reload();
+  } catch (e) { alert("Ungültiges Backup: " + e.message); }
+};
+
+/* ---- Quellen-Status ---- */
+(function renderHealth() {
+  const h = R.source_health || {};
+  const NAMES = {aerzteblatt: "Ärzteblatt", praktischarzt: "praktischArzt", drk: "DRK", vivantes: "Vivantes", charite: "Charité"};
+  const parts = Object.entries(NAMES).filter(([k]) => h[k]).map(([k, label]) => {
+    const s = h[k];
+    const ok = s.last_ok === R.scanned_at;
+    return label + ": " + (ok ? "ok (" + s.count + ")" : "zuletzt " + (s.last_ok || "nie") + " ⚠");
+  });
+  if (parts.length) $("healthbox").textContent = "Quellen-Status: " + parts.join(" · ");
+})();
+
+/* ---- Karte ---- */
+let mapMarkers = [];
+let leafletMap = null;
+function markerColor(st) {
+  if (needsFollowup(st)) return "#c14a09";
+  if (["Beworben","Hospitation","Gespräch","Zusage"].includes(st.status)) return "#2e6b46";
+  if (st.status === "Absage") return "#999";
+  return "#8e2a5c";
+}
+function renderMap() {
+  if (typeof L === "undefined") { $("map").textContent = "Karte konnte nicht geladen werden (offline?)"; return; }
+  if (!leafletMap) {
+    leafletMap = L.map("map").setView([52.507, 13.39], 10.5);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(leafletMap);
+  }
+  mapMarkers.forEach(m => m.remove());
+  mapMarkers = R.hospitals.filter(h => h.lat && h.lng).map(h => {
+    const st = store[h.id] || {};
+    const m = L.circleMarker([h.lat, h.lng], {
+      radius: 9, color: markerColor(st), fillColor: markerColor(st), fillOpacity: .85, weight: 2,
+    }).addTo(leafletMap);
+    m.bindPopup(`<b>${h.name}</b>${h.bezirk} · ${st.status || "offen"}<br>` +
+      `<a href="${h.karriere}" target="_blank">Karriere</a> · <a href="#anschreiben" onclick="openLetter('${h.id}')">Anschreiben</a>`);
+    return m;
+  });
+}
+renderMap();
 
 /* ---- Anschreiben-Generator ---- */
 const DEFAULT_ABSATZ = "Ihre Abteilung spricht mich durch ihr breites klinisches Spektrum und die strukturierte Weiterbildung besonders an.";

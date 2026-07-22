@@ -11,6 +11,30 @@
   "https://www.praktischarzt.de/job/praktisches-jahr-in-der-gynaekologie-145/": "2026-07-21",
   "https://www.praktischarzt.de/job/famulaturstelle-im-bereich-gynaekologie-und-geburtshilfe/": "2026-07-21",
   "https://www.praktischarzt.de/job/praktisches-jahr-in-der-gynaekologie-41/": "2026-07-21",
-  "https://www.praktischarzt.de/job/famulatur-in-der-gynaekologie-31/": "2026-07-21"
+  "https://www.praktischarzt.de/job/famulatur-in-der-gynaekologie-31/": "2026-07-21",
+  "https://jobs.drk-kliniken-berlin.de/stellenangebote/Weiterbildungsassistent-Assistenzarzt-Facharzt-Gynaekologie-Geburtshilfe-14050-Westend--983213": "2026-07-22",
+  "https://jobs.drk-kliniken-berlin.de/stellenangebote/Assistenzarzt-Weiterbildungsassistent-Gynaekologie-Geburtshilfe-12559-Koepenick--3184030": "2026-07-22"
+ },
+ "source_health": {
+  "aerzteblatt": {
+   "last_ok": "2026-07-22",
+   "count": 7
+  },
+  "praktischarzt": {
+   "last_ok": "2026-07-22",
+   "count": 12
+  },
+  "drk": {
+   "last_ok": "2026-07-22",
+   "count": 2
+  },
+  "vivantes": {
+   "last_ok": "2026-07-22",
+   "count": 3
+  },
+  "charite": {
+   "last_ok": "2026-07-22",
+   "count": 0
+  }
  }
 }
