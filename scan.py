@@ -323,6 +323,10 @@ def main():
         j["is_new"] = j["first_seen"] == today
 
     hospitals = json.loads((BASE / "hospitals.json").read_text(encoding="utf-8"))
+    wbb_file = BASE / "wbb.json"
+    wbb = (
+        json.loads(wbb_file.read_text(encoding="utf-8")) if wbb_file.exists() else None
+    )
 
     data = {
         "scanned_at": today,
@@ -330,6 +334,7 @@ def main():
         "errors": errors,
         "hospitals": hospitals,
         "source_health": health,
+        "wbb": wbb,
     }
     write_atomic(
         BASE / "data.js",

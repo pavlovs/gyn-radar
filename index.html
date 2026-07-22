@@ -30,6 +30,12 @@
   .leaflet-popup-content b{display:block;margin-bottom:2px}
   .chip-nachfassen{background:#c14a09;color:#fff;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;border-radius:4px;padding:2px 6px;display:inline-block;margin-top:4px}
   .applied-date{color:var(--muted);font-size:11.5px;margin-top:3px}
+  .ku{margin-top:4px;font-size:12.5px}
+  .ku a{font-weight:600;color:var(--accent);text-decoration:none}
+  .ku .scope{color:var(--muted);font-size:11px}
+  .kunote{color:var(--muted);font-size:11.5px;display:block}
+  #wbb-search{max-width:340px;margin-bottom:10px}
+  .wbb-table td{font-size:13px}
   .mt10{margin-top:10px}
   th.w-klinik{width:34%} th.w-status{width:130px} th.w-notiz{width:26%}
   #template{width:100%;font:13px/1.5 "Segoe UI",sans-serif;padding:10px;margin-top:8px}
@@ -116,12 +122,17 @@
   <div id="map"></div>
 
   <h2>Berliner Kliniken mit Gynäkologie / Geburtshilfe</h2>
-  <div class="hint">Der eigentliche Hebel: Initiativbewerbung an jede Abteilung — offene Stellen sind selten öffentlich. Status &amp; Notizen werden nur in diesem Browser gespeichert.</div>
+  <div class="hint">Der eigentliche Hebel: Initiativbewerbung an jede Abteilung — offene Stellen sind selten öffentlich. Status &amp; Notizen werden nur in diesem Browser gespeichert. kununu-Werte: Stand 22.07.2026; wo kein Haus-Profil existiert, gilt das Konzern-/Trägerprofil (Bewertungen sind hausübergreifend, nicht Gyn-spezifisch).</div>
   <table>
     <thead><tr><th class="w-klinik">Klinik</th><th>Bezirk</th><th>Links</th><th class="w-status">Status</th><th class="w-notiz">Notizen</th></tr></thead>
     <tbody id="hosp"></tbody>
   </table>
   <p class="mt10"><button class="btn" id="export">Tracker-Daten kopieren (Backup)</button> <button class="btn" id="import">Backup einspielen</button></p>
+
+  <h2>Weiterbildungsbefugte Frauenheilkunde (Praxen, MVZ &amp; Kliniken)</h2>
+  <div class="hint" id="wbb-hint">Offizielles Verzeichnis der Ärztekammer Berlin — jede Person hier darf Gyn-Weiterbildungszeit anbieten. Praxen/MVZ schreiben fast nie aus und bekommen kaum Initiativbewerbungen: der unbesetzte Kanal. Bis zu 24 Monate der Gyn-Weiterbildung sind ambulant möglich.</div>
+  <input type="text" id="wbb-search" placeholder="Suchen: Name, Einrichtung, PLZ, Bezirk …">
+  <div id="wbb-list"></div>
 
   <h2 id="anschreiben">Anschreiben-Generator</h2>
   <div class="hint">In der Klinik-Liste „Anschreiben" klicken — Anrede und Klinik-Absatz individualisieren, Text kopieren, in E-Mail oder Word einfügen. Kontaktdaten bleiben in diesem Browser.</div>
@@ -230,9 +241,13 @@ function renderHosp() {
   $("hosp").innerHTML = R.hospitals.map(h => {
     const st = store[h.id] || {};
     return `<tr class="${rowClass(h.id)}" id="row-${h.id}">
-      <td><div class="kl">${h.name}</div><div class="dept">${h.dept}</div>${h.note?`<div class="knote">${h.note}</div>`:""}</td>
+      <td><div class="kl">${h.name}</div><div class="dept">${h.dept}</div>${h.note?`<div class="knote">${h.note}</div>`:""}
+        <div class="ku">${h.ku_score
+          ? `<a href="${h.kununu}" target="_blank">★ ${h.ku_score}</a>${h.ku_n?` (${h.ku_n})`:""} <span class="scope">${h.ku_scope==="Haus"?"":h.ku_scope||""}</span>`
+          : `<a href="${h.kununu}" target="_blank">kununu</a>`}
+          ${h.ku_note?`<span class="kunote">${h.ku_note}</span>`:""}</div></td>
       <td>${h.bezirk}</td>
-      <td><a href="${h.url}" target="_blank">Website</a> · <a href="${h.karriere}" target="_blank">Karriere</a> · <a href="${h.kununu}" target="_blank">kununu</a> · <a href="#anschreiben" data-letter="${h.id}">Anschreiben</a></td>
+      <td><a href="${h.url}" target="_blank">Website</a> · <a href="${h.karriere}" target="_blank">Karriere</a> · <a href="#anschreiben" data-letter="${h.id}">Anschreiben</a></td>
       <td><select data-id="${h.id}">${STATI.map(s =>
         `<option ${s===(st.status||"")?"selected":""}>${s}</option>`).join("")}</select>
         ${st.status==="Beworben" && st.applied ? `<div class="applied-date">seit ${fmtDE(st.applied)}</div>` : ""}
@@ -303,12 +318,38 @@ function renderMap() {
     const m = L.circleMarker([h.lat, h.lng], {
       radius: 9, color: markerColor(st), fillColor: markerColor(st), fillOpacity: .85, weight: 2,
     }).addTo(leafletMap);
-    m.bindPopup(`<b>${h.name}</b>${h.bezirk} · ${st.status || "offen"}<br>` +
+    m.bindPopup(`<b>${h.name}</b>${h.bezirk} · ${st.status || "offen"}` +
+      (h.ku_score ? ` · ★ ${h.ku_score}` : "") + `<br>` +
       `<a href="${h.karriere}" target="_blank">Karriere</a> · <a href="#anschreiben" onclick="openLetter('${h.id}')">Anschreiben</a>`);
     return m;
   });
 }
 renderMap();
+
+/* ---- Weiterbildungsbefugte (Ärztekammer-Verzeichnis) ---- */
+function renderWbb() {
+  const box = $("wbb-list");
+  if (!R.wbb || !R.wbb.eintraege || !R.wbb.eintraege.length) {
+    box.innerHTML = '<div class="empty">Verzeichnis noch nicht geladen — wbb_build.py ausführen.</div>';
+    return;
+  }
+  const q = $("wbb-search").value.trim().toLowerCase();
+  const rows = R.wbb.eintraege.filter(e =>
+    !q || [e.name, e.einrichtung, e.ort, e.fach].join(" ").toLowerCase().includes(q));
+  $("wbb-hint").textContent = $("wbb-hint").textContent.split(" — Stand")[0] +
+    " — Stand " + R.wbb.stand + ", " + R.wbb.eintraege.length + " aktive Befugnisse.";
+  box.innerHTML = `<table class="wbb-table">
+    <thead><tr><th>Name</th><th>Einrichtung &amp; Adresse</th><th>Befugnis</th><th>Umfang</th></tr></thead>
+    <tbody>` + rows.slice(0, 200).map(e => `<tr>
+      <td>${esc(e.name)}</td>
+      <td>${esc(e.einrichtung)}${e.einrichtung?"<br>":""}<span class="dept">${esc(e.strasse)}, ${esc(e.ort)}</span></td>
+      <td>${esc(e.fach)}${e.seit?` <span class="dept">(seit ${esc(e.seit)})</span>`:""}</td>
+      <td>${esc(e.umfang)}</td>
+    </tr>`).join("") + "</tbody></table>" +
+    (rows.length > 200 ? '<div class="hint">… gekürzt, Suche verfeinern.</div>' : "");
+}
+$("wbb-search").oninput = renderWbb;
+renderWbb();
 
 /* ---- Anschreiben-Generator ---- */
 const DEFAULT_ABSATZ = "Ihre Abteilung spricht mich durch ihr breites klinisches Spektrum und die strukturierte Weiterbildung besonders an.";
