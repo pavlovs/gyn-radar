@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-07-21",
+ "scanned_at": "2026-07-22",
  "jobs": [],
  "errors": [],
  "hospitals": [
