@@ -258,7 +258,7 @@ window.RADAR = {
  "source_health": {
   "aerzteblatt": {
    "last_ok": "2026-07-22",
-   "count": 7
+   "count": 0
   },
   "praktischarzt": {
    "last_ok": "2026-07-22",
