@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-07-22",
+ "scanned_at": "2026-07-23",
  "jobs": [
   {
    "source": "DRK Kliniken Berlin",
@@ -7,7 +7,7 @@ window.RADAR = {
    "url": "https://jobs.drk-kliniken-berlin.de/stellenangebote/Weiterbildungsassistent-Assistenzarzt-Facharzt-Gynaekologie-Geburtshilfe-14050-Westend--983213",
    "type": "Assistenzarzt",
    "first_seen": "2026-07-22",
-   "is_new": true
+   "is_new": false
   },
   {
    "source": "DRK Kliniken Berlin",
@@ -15,7 +15,7 @@ window.RADAR = {
    "url": "https://jobs.drk-kliniken-berlin.de/stellenangebote/Assistenzarzt-Weiterbildungsassistent-Gynaekologie-Geburtshilfe-12559-Koepenick--3184030",
    "type": "Assistenzarzt",
    "first_seen": "2026-07-22",
-   "is_new": true
+   "is_new": false
   }
  ],
  "errors": [],
@@ -329,23 +329,23 @@ window.RADAR = {
  ],
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-07-22",
+   "last_ok": "2026-07-23",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-07-22",
+   "last_ok": "2026-07-23",
    "count": 12
   },
   "drk": {
-   "last_ok": "2026-07-22",
+   "last_ok": "2026-07-23",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-07-22",
+   "last_ok": "2026-07-23",
    "count": 3
   },
   "charite": {
-   "last_ok": "2026-07-22",
+   "last_ok": "2026-07-23",
    "count": 0
   }
  },
