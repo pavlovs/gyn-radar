@@ -13,27 +13,28 @@
   "https://www.praktischarzt.de/job/praktisches-jahr-in-der-gynaekologie-41/": "2026-07-21",
   "https://www.praktischarzt.de/job/famulatur-in-der-gynaekologie-31/": "2026-07-21",
   "https://jobs.drk-kliniken-berlin.de/stellenangebote/Weiterbildungsassistent-Assistenzarzt-Facharzt-Gynaekologie-Geburtshilfe-14050-Westend--983213": "2026-07-22",
-  "https://jobs.drk-kliniken-berlin.de/stellenangebote/Assistenzarzt-Weiterbildungsassistent-Gynaekologie-Geburtshilfe-12559-Koepenick--3184030": "2026-07-22"
+  "https://jobs.drk-kliniken-berlin.de/stellenangebote/Assistenzarzt-Weiterbildungsassistent-Gynaekologie-Geburtshilfe-12559-Koepenick--3184030": "2026-07-22",
+  "https://karriere.vivantes.de/stellenangebote/detail/assistenzarzt-assistenzaerztin-gynaekologie-gynaekologische-onkologie-und-geburtsmedizin-mwd-kfh1556/": "2026-07-28"
  },
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-07-27",
+   "last_ok": "2026-07-28",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-07-27",
-   "count": 12
+   "last_ok": "2026-07-28",
+   "count": 0
   },
   "drk": {
-   "last_ok": "2026-07-27",
+   "last_ok": "2026-07-28",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-07-27",
-   "count": 3
+   "last_ok": "2026-07-28",
+   "count": 4
   },
   "charite": {
-   "last_ok": "2026-07-27",
+   "last_ok": "2026-07-28",
    "count": 0
   }
  }
