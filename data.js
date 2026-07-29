@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-07-28",
+ "scanned_at": "2026-07-29",
  "jobs": [
   {
    "source": "DRK Kliniken Berlin",
@@ -23,7 +23,7 @@ window.RADAR = {
    "url": "https://karriere.vivantes.de/stellenangebote/detail/assistenzarzt-assistenzaerztin-gynaekologie-gynaekologische-onkologie-und-geburtsmedizin-mwd-kfh1556/",
    "type": "Assistenzarzt",
    "first_seen": "2026-07-28",
-   "is_new": true
+   "is_new": false
   }
  ],
  "errors": [],
@@ -337,23 +337,23 @@ window.RADAR = {
  ],
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-07-28",
+   "last_ok": "2026-07-29",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-07-28",
+   "last_ok": "2026-07-29",
    "count": 0
   },
   "drk": {
-   "last_ok": "2026-07-28",
+   "last_ok": "2026-07-29",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-07-28",
+   "last_ok": "2026-07-29",
    "count": 4
   },
   "charite": {
-   "last_ok": "2026-07-28",
+   "last_ok": "2026-07-29",
    "count": 0
   }
  },
