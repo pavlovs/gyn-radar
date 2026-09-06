@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-09-05",
+ "scanned_at": "2026-09-06",
  "jobs": [
   {
    "source": "DRK Kliniken Berlin",
@@ -18,9 +18,7 @@ window.RADAR = {
    "is_new": false
   }
  ],
- "errors": [
-  "scan_vivantes: <urlopen error timed out>"
- ],
+ "errors": [],
  "hospitals": [
   {
    "id": "vivantes-urban",
@@ -331,24 +329,23 @@ window.RADAR = {
  ],
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-09-05",
+   "last_ok": "2026-09-06",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-09-05",
+   "last_ok": "2026-09-06",
    "count": 12
   },
   "drk": {
-   "last_ok": "2026-09-05",
+   "last_ok": "2026-09-06",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-09-04",
-   "count": 4,
-   "error": "2026-09-05"
+   "last_ok": "2026-09-06",
+   "count": 4
   },
   "charite": {
-   "last_ok": "2026-09-05",
+   "last_ok": "2026-09-06",
    "count": 0
   }
  },
