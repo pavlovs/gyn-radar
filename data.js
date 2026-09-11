@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-09-10",
+ "scanned_at": "2026-09-11",
  "jobs": [
   {
    "source": "DRK Kliniken Berlin",
@@ -15,14 +15,6 @@ window.RADAR = {
    "url": "https://jobs.drk-kliniken-berlin.de/stellenangebote/Assistenzarzt-Weiterbildungsassistent-Gynaekologie-Geburtshilfe-12559-Koepenick--3184030",
    "type": "Assistenzarzt",
    "first_seen": "2026-07-22",
-   "is_new": false
-  },
-  {
-   "source": "Vivantes",
-   "title": "Assistenzarzt / Assistenzärztin - Gynäkologie und Geburtsmedizin - Rotation Brustzentrum (m/w/d)",
-   "url": "https://karriere.vivantes.de/stellenangebote/detail/assistenzarzt-assistenzaerztin-gynaekologie-und-geburtsmedizin-rotation-brustzentrum-mwd-kfh1806/",
-   "type": "Assistenzarzt",
-   "first_seen": "2026-09-09",
    "is_new": false
   }
  ],
@@ -337,23 +329,23 @@ window.RADAR = {
  ],
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-09-10",
+   "last_ok": "2026-09-11",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-09-10",
+   "last_ok": "2026-09-11",
    "count": 12
   },
   "drk": {
-   "last_ok": "2026-09-10",
+   "last_ok": "2026-09-11",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-09-10",
+   "last_ok": "2026-09-11",
    "count": 4
   },
   "charite": {
-   "last_ok": "2026-09-10",
+   "last_ok": "2026-09-11",
    "count": 0
   }
  },
