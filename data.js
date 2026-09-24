@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-09-23",
+ "scanned_at": "2026-09-24",
  "jobs": [
   {
    "source": "DRK Kliniken Berlin",
@@ -329,23 +329,23 @@ window.RADAR = {
  ],
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-09-23",
+   "last_ok": "2026-09-24",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-09-23",
-   "count": 24
+   "last_ok": "2026-09-24",
+   "count": 0
   },
   "drk": {
-   "last_ok": "2026-09-23",
+   "last_ok": "2026-09-24",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-09-23",
+   "last_ok": "2026-09-24",
    "count": 4
   },
   "charite": {
-   "last_ok": "2026-09-23",
+   "last_ok": "2026-09-24",
    "count": 0
   }
  },
