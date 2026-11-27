@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-11-26",
+ "scanned_at": "2026-11-27",
  "jobs": [
   {
    "source": "DRK Kliniken Berlin",
@@ -16,6 +16,14 @@ window.RADAR = {
    "type": "Assistenzarzt",
    "first_seen": "2026-07-22",
    "is_new": false
+  },
+  {
+   "source": "Charité",
+   "title": "Medizinische Dokumentationsassistenz (d/w/m) Klinik für Neonatologie, Geburtsmedizin und Gynäkologie Einsatzort: Campus Charité Mitte",
+   "url": "https://karriere.charite.de/stellenangebote/detail/8619",
+   "type": "Assistenzarzt",
+   "first_seen": "2026-11-27",
+   "is_new": true
   }
  ],
  "errors": [],
@@ -329,23 +337,23 @@ window.RADAR = {
  ],
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 14
   },
   "drk": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-11-26",
-   "count": 3
+   "last_ok": "2026-11-27",
+   "count": 2
   },
   "charite": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 1
   }
  },

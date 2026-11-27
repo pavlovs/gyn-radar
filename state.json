@@ -15,27 +15,28 @@
   "https://jobs.drk-kliniken-berlin.de/stellenangebote/Weiterbildungsassistent-Assistenzarzt-Facharzt-Gynaekologie-Geburtshilfe-14050-Westend--983213": "2026-07-22",
   "https://jobs.drk-kliniken-berlin.de/stellenangebote/Assistenzarzt-Weiterbildungsassistent-Gynaekologie-Geburtshilfe-12559-Koepenick--3184030": "2026-07-22",
   "https://karriere.vivantes.de/stellenangebote/detail/assistenzarzt-assistenzaerztin-gynaekologie-gynaekologische-onkologie-und-geburtsmedizin-mwd-kfh1556/": "2026-07-28",
-  "https://karriere.vivantes.de/stellenangebote/detail/assistenzarzt-assistenzaerztin-gynaekologie-und-geburtsmedizin-rotation-brustzentrum-mwd-kfh1806/": "2026-09-09"
+  "https://karriere.vivantes.de/stellenangebote/detail/assistenzarzt-assistenzaerztin-gynaekologie-und-geburtsmedizin-rotation-brustzentrum-mwd-kfh1806/": "2026-09-09",
+  "https://karriere.charite.de/stellenangebote/detail/8619": "2026-11-27"
  },
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 14
   },
   "drk": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-11-26",
-   "count": 3
+   "last_ok": "2026-11-27",
+   "count": 2
   },
   "charite": {
-   "last_ok": "2026-11-26",
+   "last_ok": "2026-11-27",
    "count": 1
   }
  }
