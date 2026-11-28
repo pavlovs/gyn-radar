@@ -1,5 +1,5 @@
 window.RADAR = {
- "scanned_at": "2026-11-27",
+ "scanned_at": "2026-11-28",
  "jobs": [
   {
    "source": "DRK Kliniken Berlin",
@@ -23,7 +23,7 @@ window.RADAR = {
    "url": "https://karriere.charite.de/stellenangebote/detail/8619",
    "type": "Assistenzarzt",
    "first_seen": "2026-11-27",
-   "is_new": true
+   "is_new": false
   }
  ],
  "errors": [],
@@ -337,23 +337,23 @@ window.RADAR = {
  ],
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 14
   },
   "drk": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 2
   },
   "charite": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 1
   }
  },

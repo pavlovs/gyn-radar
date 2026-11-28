@@ -20,23 +20,23 @@
  },
  "source_health": {
   "aerzteblatt": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 0
   },
   "praktischarzt": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 14
   },
   "drk": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 2
   },
   "vivantes": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 2
   },
   "charite": {
-   "last_ok": "2026-11-27",
+   "last_ok": "2026-11-28",
    "count": 1
   }
  }
